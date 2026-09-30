@@ -13,7 +13,7 @@ def health(request):
         "status": "ok"
     })
     
-api_view(["POST"])
+@api_view(["POST"])
 def discord_interactions(request):
     signature = request.headers.get("X-Signature-Ed25519")
     timestamp = request.headers.get("X-Signature-Timestamp")

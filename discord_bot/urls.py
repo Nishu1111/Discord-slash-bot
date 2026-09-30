@@ -3,6 +3,7 @@ from .views import health, discord_interactions
 
 
 urlpatterns = [
+    path("", health),
     path("health/", health),
-    path("discord/interaactions/", discord_interactions)
+    path("discord/interactions/", discord_interactions)
 ]
