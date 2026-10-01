@@ -123,3 +123,32 @@ class MirrorAttempt(models.Model):
 
     class Meta:
         ordering = ["-created_at"]
+        
+        
+class CommandRule(models.Model):
+    name = models.CharField(max_length=64)
+    command_name = models.CharField(max_length=64, default="report")
+    keywords = models.TextField(
+        help_text="Comma-separated. Matches if any keyword appears."
+    )
+    action = models.CharField(max_length=32, default="flagged_urgent")
+    mirror = models.BooleanField(default=True)
+    priority = models.PositiveSmallIntegerField(
+        default=10,
+        help_text="Lower runs first"
+    )
+    enabled = models.BooleanField(default=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ["priority", "id"]
+
+    def keyword_list(self):
+        return [
+            keyword.strip().lower()
+            for keyword in self.keywords.split(",")
+            if keyword.strip()
+        ]
+
+    def __str__(self):
+        return self.name

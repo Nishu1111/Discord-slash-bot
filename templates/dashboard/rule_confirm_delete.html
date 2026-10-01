@@ -1,0 +1,32 @@
+{% extends "dashboard/base.html" %}
+
+{% block title %}Delete Rule{% endblock %}
+
+{% block content %}
+
+<h2>Delete Rule</h2>
+
+<p>
+    Are you sure you want to delete
+    <strong>{{ object.name }}</strong>?
+</p>
+
+
+<form method="post">
+
+    {% csrf_token %}
+
+    <button type="submit">
+        Yes, delete
+    </button>
+
+    <a
+        class="button"
+        href="{% url 'rules' %}"
+    >
+        Cancel
+    </a>
+
+</form>
+
+{% endblock %}

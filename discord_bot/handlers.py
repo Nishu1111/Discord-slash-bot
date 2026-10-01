@@ -1,22 +1,26 @@
-
+from .models import CommandRule
 #manual words 
-URGENT_WORDS = (
-    "urgent",
-    "down",
-    "outage",
-    "critical",
-    "failing",
-)
+# URGENT_WORDS = (
+#     "urgent",
+#     "down",
+#     "outage",
+#     "critical",
+#     "failing",
+# )
 
+DEFAULT = ("logged", True)
 
-def classify(text):
-    t = text.lower()
+def classify(command_name, text):
+    text = text.lower()
 
-    return (
-        "flagged_urgent"
-        if any(word in t for word in URGENT_WORDS)
-        else "logged"
-    )
+    for rule in CommandRule.objects.filter(
+        enabled=True,
+        command_name=command_name,
+    ):
+        if any(keyword in text for keyword in rule.keyword_list()):
+            return rule.action, rule.mirror
+
+    return DEFAULT
     
 def handle_status(interaction):
     return {

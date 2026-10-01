@@ -1,0 +1,107 @@
+{% extends "dashboard/base.html" %}
+
+{% block title %}Command Rules{% endblock %}
+
+{% block content %}
+
+<div style="display:flex;justify-content:space-between;align-items:center">
+
+    <h2>Command Rules</h2>
+
+    <a
+        class="button"
+        href="{% url 'rule_new' %}"
+    >
+        + New rule
+    </a>
+
+</div>
+
+
+<table>
+
+    <thead>
+
+        <tr>
+            <th>Priority</th>
+            <th>Name</th>
+            <th>Command</th>
+            <th>Keywords</th>
+            <th>Action</th>
+            <th>Mirror</th>
+            <th>Enabled</th>
+            <th>Actions</th>
+        </tr>
+
+    </thead>
+
+
+    <tbody>
+
+        {% for rule in object_list %}
+
+        <tr>
+
+            <td>
+                {{ rule.priority }}
+            </td>
+
+            <td>
+                {{ rule.name }}
+            </td>
+
+            <td>
+                /{{ rule.command_name }}
+            </td>
+
+            <td>
+                {{ rule.keywords }}
+            </td>
+
+            <td>
+                {{ rule.action }}
+            </td>
+
+            <td>
+                {{ rule.mirror }}
+            </td>
+
+            <td>
+                {{ rule.enabled }}
+            </td>
+
+            <td>
+
+                <a
+                    href="{% url 'rule_edit' rule.pk %}"
+                >
+                    Edit
+                </a>
+
+                |
+
+                <a
+                    href="{% url 'rule_delete' rule.pk %}"
+                >
+                    Delete
+                </a>
+
+            </td>
+
+        </tr>
+
+        {% empty %}
+
+        <tr>
+            <td colspan="8">
+                No rules configured.
+            </td>
+        </tr>
+
+        {% endfor %}
+
+    </tbody>
+
+</table>
+
+{% endblock %}

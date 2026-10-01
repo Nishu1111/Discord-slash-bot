@@ -1,0 +1,39 @@
+{% extends "dashboard/base.html" %}
+
+{% block title %}Rule{% endblock %}
+
+{% block content %}
+
+<h2>
+    {% if object %}
+        Edit Rule
+    {% else %}
+        New Rule
+    {% endif %}
+</h2>
+
+
+<form method="post">
+
+    {% csrf_token %}
+
+    {{ form.as_p }}
+
+    <div class="actions">
+
+        <button type="submit">
+            Save
+        </button>
+
+        <a
+            class="button"
+            href="{% url 'rules' %}"
+        >
+            Cancel
+        </a>
+
+    </div>
+
+</form>
+
+{% endblock %}

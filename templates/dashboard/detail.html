@@ -1,0 +1,180 @@
+{% extends "dashboard/base.html" %}
+
+{% block title %}Log Detail{% endblock %}
+
+{% block content %}
+
+<h2>Command Detail</h2>
+
+
+<div class="actions">
+
+    <a
+        class="button"
+        href="{% url 'dashboard' %}"
+    >
+        ← Back to logs
+    </a>
+
+</div>
+
+
+<h3>Command</h3>
+
+<table>
+
+    <tr>
+        <th>ID</th>
+        <td>{{ log.id }}</td>
+    </tr>
+
+    <tr>
+        <th>Interaction ID</th>
+        <td>{{ log.interaction_id }}</td>
+    </tr>
+
+    <tr>
+        <th>Command</th>
+        <td>/{{ log.command_name }}</td>
+    </tr>
+
+    <tr>
+        <th>User</th>
+        <td>{{ log.username|default:"-" }}</td>
+    </tr>
+
+    <tr>
+        <th>Status</th>
+        <td>
+            <span class="badge {{ log.status }}">
+                {{ log.status }}
+            </span>
+        </td>
+    </tr>
+
+    <tr>
+        <th>Action</th>
+        <td>{{ log.action|default:"-" }}</td>
+    </tr>
+
+    <tr>
+        <th>Mirror status</th>
+        <td>
+            <span class="badge {{ log.mirror_status }}">
+                {{ log.mirror_status }}
+            </span>
+        </td>
+    </tr>
+
+    <tr>
+        <th>Mirror attempts</th>
+        <td>{{ log.mirror_attempts }}</td>
+    </tr>
+
+    <tr>
+        <th>Created</th>
+        <td>{{ log.created_at }}</td>
+    </tr>
+
+</table>
+
+
+<h3>Options</h3>
+
+<pre>{{ log.options }}</pre>
+
+
+<h3>Response</h3>
+
+<pre>{{ log.response_payload|default:"-" }}</pre>
+
+
+<h3>Error</h3>
+
+<pre>{{ log.error|default:"-" }}</pre>
+
+
+{% if log.mirror_status == "failed" %}
+
+<h3>Retry</h3>
+
+<p>
+    The mirror failed. You can retry it manually.
+</p>
+
+<form
+    method="post"
+    action="{% url 'retry_one' log.pk %}"
+>
+
+    {% csrf_token %}
+
+    <button type="submit">
+        Retry mirror now
+    </button>
+
+</form>
+
+{% endif %}
+
+
+<h3>Mirror Attempts</h3>
+
+<table>
+
+    <thead>
+
+        <tr>
+            <th>Attempt</th>
+            <th>OK</th>
+            <th>HTTP Status</th>
+            <th>Error</th>
+            <th>Time</th>
+        </tr>
+
+    </thead>
+
+
+    <tbody>
+
+        {% for attempt in attempts %}
+
+        <tr>
+
+            <td>
+                {{ attempt.attempt_no }}
+            </td>
+
+            <td>
+                {{ attempt.ok }}
+            </td>
+
+            <td>
+                {{ attempt.http_status|default:"-" }}
+            </td>
+
+            <td>
+                {{ attempt.error|default:"-" }}
+            </td>
+
+            <td>
+                {{ attempt.created_at|default:attempt.attempted_at }}
+            </td>
+
+        </tr>
+
+        {% empty %}
+
+        <tr>
+            <td colspan="5">
+                No mirror attempts recorded.
+            </td>
+        </tr>
+
+        {% endfor %}
+
+    </tbody>
+
+</table>
+
+{% endblock %}

@@ -1,0 +1,215 @@
+{% extends "dashboard/base.html" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+
+<h2>Command Dashboard</h2>
+
+<div class="cards">
+
+    <div class="card">
+        <b>{{ stats.total }}</b>
+        <br>
+        commands
+    </div>
+
+    <div class="card">
+        <b>{{ stats.failed }}</b>
+        <br>
+        failed
+    </div>
+
+    <div class="card">
+        <b>{{ stats.mirror_failed }}</b>
+        <br>
+        mirror failed
+    </div>
+
+    <div class="card">
+        <b>{{ stats.mirror_pending }}</b>
+        <br>
+        mirror pending
+    </div>
+
+</div>
+
+
+<form
+    method="get"
+    style="margin-bottom:12px;display:flex;gap:8px;flex-wrap:wrap"
+>
+
+    <input
+        name="q"
+        placeholder="user / id / text"
+        value="{{ filters.q }}"
+    >
+
+
+    <select name="status">
+
+        <option value="">
+            any status
+        </option>
+
+        {% for s in status_choices %}
+            <option
+                value="{{ s }}"
+                {% if filters.status == s %}selected{% endif %}
+            >
+                {{ s }}
+            </option>
+        {% endfor %}
+
+    </select>
+
+
+    <select name="command">
+
+        <option value="">
+            any command
+        </option>
+
+        {% for command in commands %}
+            <option
+                value="{{ command }}"
+                {% if filters.command == command %}selected{% endif %}
+            >
+                /{{ command }}
+            </option>
+        {% endfor %}
+
+    </select>
+
+
+    <select name="mirror">
+
+        <option value="">
+            any mirror
+        </option>
+
+        {% for s in mirror_choices %}
+            <option
+                value="{{ s }}"
+                {% if filters.mirror == s %}selected{% endif %}
+            >
+                {{ s }}
+            </option>
+        {% endfor %}
+
+    </select>
+
+
+    <button type="submit">
+        Filter
+    </button>
+
+    <a class="button" href="{% url 'dashboard' %}">
+        Clear
+    </a>
+
+</form>
+
+
+<table>
+
+    <thead>
+        <tr>
+            <th>Time</th>
+            <th>Command</th>
+            <th>User</th>
+            <th>Status</th>
+            <th>Action</th>
+            <th>Mirror</th>
+            <th></th>
+        </tr>
+    </thead>
+
+    <tbody id="rows">
+
+        {% include "dashboard/rows.html" %}
+
+    </tbody>
+
+</table>
+
+
+{% if page.has_other_pages %}
+
+<div class="pagination">
+
+    {% if page.has_previous %}
+        <a
+            class="button"
+            href="?page={{ page.previous_page_number }}&status={{ filters.status }}&command={{ filters.command }}&mirror={{ filters.mirror }}&q={{ filters.q }}"
+        >
+            Previous
+        </a>
+    {% endif %}
+
+
+    <span>
+        Page {{ page.number }} of {{ page.paginator.num_pages }}
+    </span>
+
+
+    {% if page.has_next %}
+        <a
+            class="button"
+            href="?page={{ page.next_page_number }}&status={{ filters.status }}&command={{ filters.command }}&mirror={{ filters.mirror }}&q={{ filters.q }}"
+        >
+            Next
+        </a>
+    {% endif %}
+
+</div>
+
+{% endif %}
+
+
+<script>
+
+    // Refresh only the table rows every 5 seconds.
+    // The current filters and page are preserved.
+
+    setInterval(async () => {
+
+        if (document.hidden) {
+            return;
+        }
+
+        const url = new URL(window.location.href);
+
+        url.searchParams.set("partial", "1");
+
+        try {
+
+            const response = await fetch(
+                url,
+                {
+                    credentials: "same-origin"
+                }
+            );
+
+            if (response.ok) {
+
+                document.getElementById("rows").innerHTML =
+                    await response.text();
+
+            }
+
+        } catch (error) {
+
+            console.error(
+                "Dashboard refresh failed:",
+                error
+            );
+
+        }
+
+    }, 5000);
+
+</script>
+
+{% endblock %}

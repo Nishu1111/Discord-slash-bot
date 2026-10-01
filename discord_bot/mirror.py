@@ -129,12 +129,22 @@ def process_report(log_id, app_id, token):
     try:
         log = CommandLog.objects.get(pk=log_id)
 
-        ok = send_mirror(log)
+        # ok = send_mirror(log)
+        if log.mirror_status == CommandLog.MirrorStatus.PENDING:
+            ok = send_mirror(log)
+
+            status = (
+                "Mirrored to the team channel."
+                if ok
+                else "Saved. Mirroring will be retried automatically."
+            )
+        else:
+            status = "Logged."
 
         text = log.options.get("text", "")
 
         flag = (
-            "🚨 Flagged as urgent. "
+            "Flagged as urgent. "
             if log.action == "flagged_urgent"
             else ""
         )

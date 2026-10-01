@@ -157,17 +157,21 @@ def discord_interactions(request):
         log.save()
 
         # Start background mirror for /report
-        if (
-            log.command_name == "report"
-            and log.status == CommandLog.Status.PROCESSED
-        ):
+        if log.command_name == "report" and log.status == CommandLog.Status.PROCESSED:
+            action, do_mirror = classify(
+                "report",
+                log.options.get("text", "")
+            )
+
             claimed = CommandLog.objects.filter(
                 pk=log.pk,
-                mirror_status=CommandLog.MirrorStatus.NOT_APPLICABLE,
+                action="", #to prevent duplication during interactions twice
             ).update(
-                mirror_status=CommandLog.MirrorStatus.PENDING,
-                action=classify(
-                    log.options.get("text", "")
+                action=action,
+                mirror_status=(
+                    CommandLog.MirrorStatus.PENDING
+                    if do_mirror
+                    else CommandLog.MirrorStatus.NOT_APPLICABLE
                 ),
             )
 
@@ -178,6 +182,7 @@ def discord_interactions(request):
                     interaction["application_id"],
                     interaction["token"],
                 )
+
 
         return Response(payload)
 

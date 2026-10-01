@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>
+        {% block title %}Bot Dashboard{% endblock %}
+    </title>
+
+    <style>
+        body {
+            font-family: system-ui, sans-serif;
+            margin: 0;
+            background: #f6f7f9;
+            color: #1c1e21;
+        }
+
+        nav {
+            background: #1f2430;
+            padding: 12px 24px;
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        nav a,
+        nav button {
+            color: #fff;
+            text-decoration: none;
+            background: none;
+            border: 0;
+            font: inherit;
+            cursor: pointer;
+        }
+
+        main {
+            max-width: 1100px;
+            margin: 24px auto;
+            padding: 0 16px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #fff;
+        }
+
+        th,
+        td {
+            padding: 8px 10px;
+            border-bottom: 1px solid #e3e5e8;
+            text-align: left;
+            font-size: 14px;
+        }
+
+        .badge {
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 12px;
+        }
+
+        .processed,
+        .sent {
+            background: #d9f2e0;
+        }
+
+        .failed {
+            background: #fbd9d9;
+        }
+
+        .pending,
+        .received {
+            background: #fff1c7;
+        }
+
+        .not_applicable {
+            background: #e8e9eb;
+        }
+
+        .cards {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .card {
+            background: #fff;
+            padding: 12px 16px;
+            border-radius: 8px;
+            flex: 1;
+        }
+
+        input,
+        select,
+        textarea {
+            padding: 7px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button,
+        .button {
+            padding: 7px 12px;
+            border: 1px solid #bbb;
+            border-radius: 4px;
+            background: #fff;
+            cursor: pointer;
+            text-decoration: none;
+            color: #222;
+        }
+
+        .actions {
+            display: flex;
+            gap: 8px;
+            margin: 16px 0;
+        }
+
+        pre {
+            white-space: pre-wrap;
+            word-break: break-word;
+            background: #fff;
+            padding: 12px;
+            border-radius: 6px;
+            overflow-x: auto;
+        }
+
+        .pagination {
+            margin-top: 16px;
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .pagination a {
+            text-decoration: none;
+        }
+
+        .muted {
+            color: #666;
+        }
+    </style>
+</head>
+
+<body>
+
+<nav>
+    <strong style="color:#fff">Slash Bot</strong>
+
+    {% if user.is_authenticated and user.is_staff %}
+        <a href="{% url 'dashboard' %}">Logs</a>
+        <a href="{% url 'rules' %}">Rules</a>
+
+        <span style="flex:1"></span>
+
+        <form method="post" action="{% url 'logout' %}">
+            {% csrf_token %}
+            <button>
+                Log out ({{ user.username }})
+            </button>
+        </form>
+    {% endif %}
+</nav>
+
+<main>
+    {% block content %}
+    {% endblock %}
+</main>
+
+</body>
+</html>

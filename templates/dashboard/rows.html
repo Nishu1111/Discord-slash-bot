@@ -1,0 +1,78 @@
+{% for l in page %}
+
+<tr>
+
+    <td>
+        {{ l.created_at|date:"d M H:i:s" }}
+    </td>
+
+
+    <td>
+
+        /{{ l.command_name }}
+
+        {% if l.options.text %}
+
+            <br>
+
+            <small>
+                {{ l.options.text|truncatechars:50 }}
+            </small>
+
+        {% endif %}
+
+    </td>
+
+
+    <td>
+        {{ l.username|default:"-" }}
+    </td>
+
+
+    <td>
+
+        <span class="badge {{ l.status }}">
+            {{ l.status }}
+        </span>
+
+    </td>
+
+
+    <td>
+        {{ l.action|default:"-" }}
+    </td>
+
+
+    <td>
+
+        <span class="badge {{ l.mirror_status }}">
+            {{ l.mirror_status }}
+        </span>
+
+        {% if l.mirror_attempts %}
+            ×{{ l.mirror_attempts }}
+        {% endif %}
+
+    </td>
+
+
+    <td>
+
+        <a href="{% url 'log_detail' l.pk %}">
+            View
+        </a>
+
+    </td>
+
+</tr>
+
+
+{% empty %}
+
+<tr>
+    <td colspan="7">
+        No commands yet.
+    </td>
+</tr>
+
+{% endfor %}
