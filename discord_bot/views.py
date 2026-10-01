@@ -29,6 +29,12 @@ def discord_interactions(request):
 
     public_key = os.getenv("DISCORD_PUBLIC_KEY")
 
+    if not public_key:
+        return Response(
+            {"error": "Discord public key is not configured"},
+            status=500,
+        )
+
     try:
         verify_key = VerifyKey(bytes.fromhex(public_key))
 
@@ -45,9 +51,52 @@ def discord_interactions(request):
 
     interaction = request.data
 
-    if interaction.get("type") == 1:
+    interaction_type = interaction.get("type")
+
+    # Discord PING
+    if interaction_type == 1:
         return Response({
             "type": 1
+        })
+
+    # Discord slash command
+    if interaction_type == 2:
+        data = interaction.get("data", {})
+        command_name = data.get("name")
+
+        # /status
+        if command_name == "status":
+            return Response({
+                "type": 4,
+                "data": {
+                    "content": "Bot is online and healthy."
+                }
+            })
+
+        # /report
+        if command_name == "report":
+            options = data.get("options", [])
+
+            report_text = ""
+
+            for option in options:
+                if option.get("name") == "text":
+                    report_text = option.get("value", "")
+                    break
+
+            return Response({
+                "type": 4,
+                "data": {
+                    "content": f"Report received: {report_text}"
+                }
+            })
+
+        # Unknown command
+        return Response({
+            "type": 4,
+            "data": {
+                "content": "Unknown command."
+            }
         })
 
     return Response({
