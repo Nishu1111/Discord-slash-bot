@@ -175,7 +175,7 @@ def discord_interactions(request):
                 ),
             )
 
-            # Start the task only if we claimed the job
+            # Start the task only if we claimed the jobs
             if claimed:
                 start_report_task(
                     log.pk,

@@ -72,7 +72,7 @@ class Command(BaseCommand):
                 timeout=10,
             )
 
-            # Discord returns 200 or 201 when registration succeeds
+            # Discord returns 200 and 201 when registration succeeds 
             if response.status_code in (200, 201):
                 self.stdout.write(
                     self.style.SUCCESS(
