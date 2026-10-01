@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import CommandLog
+from .models import CommandLog, MirrorAttempt
 
 
 @admin.register(CommandLog)
@@ -11,6 +11,9 @@ class CommandLogAdmin(admin.ModelAdmin):
         "status",
         "created_at",
         "processed_at",
+        "action",
+        "mirror_status",
+        "mirror_attempts",
     )
 
     list_filter = (
@@ -23,4 +26,15 @@ class CommandLogAdmin(admin.ModelAdmin):
         "username",
         "command_name",
         "guild_id",
+    )
+    
+@admin.register(MirrorAttempt)
+class MirrorAttemptAdmin(admin.ModelAdmin):
+    list_display = (
+        "log",
+        "attempt_no",
+        "ok",
+        "http_status",
+        "error",
+        "created_at",
     )

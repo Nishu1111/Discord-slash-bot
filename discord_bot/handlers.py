@@ -1,3 +1,23 @@
+
+#manual words 
+URGENT_WORDS = (
+    "urgent",
+    "down",
+    "outage",
+    "critical",
+    "failing",
+)
+
+
+def classify(text):
+    t = text.lower()
+
+    return (
+        "flagged_urgent"
+        if any(word in t for word in URGENT_WORDS)
+        else "logged"
+    )
+    
 def handle_status(interaction):
     return {
         "type": 4,

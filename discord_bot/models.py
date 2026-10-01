@@ -74,3 +74,52 @@ class CommandLog(models.Model):
 
     def __str__(self):
         return f"{self.command_name} ({self.interaction_id})"
+    
+    class MirrorStatus(models.TextChoices):
+        NOT_APPLICABLE = "not_applicable"
+        PENDING = "pending"
+        SENT = "sent"
+        FAILED = "failed"
+
+    #store the simple rule
+    action = models.CharField(max_length=32, blank=True)          # flagged_urgent / logged
+    
+    #track the current mirror status
+    mirror_status = models.CharField(
+        max_length=16, 
+        choices=MirrorStatus.choices,
+        default=MirrorStatus.NOT_APPLICABLE)
+    
+    # count tried times
+    mirror_attempts = models.PositiveSmallIntegerField(default=0)
+    
+    #latest failer reason
+    mirror_last_error = models.CharField(max_length=200, blank=True)
+    
+class MirrorAttempt(models.Model):
+    log = models.ForeignKey(
+        CommandLog,
+        on_delete=models.CASCADE,
+        related_name="attempts",
+    )
+
+    attempt_no = models.PositiveSmallIntegerField()
+
+    ok = models.BooleanField()
+
+    http_status = models.PositiveSmallIntegerField(
+        null=True,
+        blank=True,
+    )
+
+    error = models.CharField(
+        max_length=200,
+        blank=True,
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+    )
+
+    class Meta:
+        ordering = ["-created_at"]

@@ -10,8 +10,9 @@ from nacl.signing import VerifyKey
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
-from .handlers import HANDLERS
+from .handlers import HANDLERS, classify
 from .models import CommandLog
+from .mirror import start_report_task
 
 
 def extract_user(interaction):
@@ -154,6 +155,29 @@ def discord_interactions(request):
 
         log.processed_at = timezone.now()
         log.save()
+
+        # Start background mirror for /report
+        if (
+            log.command_name == "report"
+            and log.status == CommandLog.Status.PROCESSED
+        ):
+            claimed = CommandLog.objects.filter(
+                pk=log.pk,
+                mirror_status=CommandLog.MirrorStatus.NOT_APPLICABLE,
+            ).update(
+                mirror_status=CommandLog.MirrorStatus.PENDING,
+                action=classify(
+                    log.options.get("text", "")
+                ),
+            )
+
+            # Start the task only if we claimed the job
+            if claimed:
+                start_report_task(
+                    log.pk,
+                    interaction["application_id"],
+                    interaction["token"],
+                )
 
         return Response(payload)
 
