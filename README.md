@@ -34,8 +34,8 @@ DJANGO_SECRET_KEY=***************************
 ## Run locally
 Requires Python 3.11+ and a Postgres database (a free Neon DB works).
 
-```bash
-git clone []
+# the bash commaands
+git clone https://github.com/Nishu1111/Discord-slash-bot.git
 cd discord-slash-bot
 python -m venv venv
 venv\Scripts\activate          # Windows
@@ -46,7 +46,6 @@ cp .env.example .env           # then fill in the values
 python manage.py migrate
 python manage.py createsuperuser
 python manage.py runserver
-```
 
 - Health check: http://127.0.0.1:8000/discord/health/
 - Dashboard: http://127.0.0.1:8000/dashboard/ (log in with the superuser)
