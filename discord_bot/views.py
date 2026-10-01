@@ -17,7 +17,10 @@ def health(request):
 def discord_interactions(request):
     signature = request.headers.get("X-Signature-Ed25519")
     timestamp = request.headers.get("X-Signature-Timestamp")
-
+    print("----------------------------------------------")
+    print("Signature exists:", bool(signature))
+    print("Timestamp exists:", bool(timestamp))
+    print("Header names:", list(request.headers.keys()))
     if not signature or not timestamp:
         return Response(
             {"error": "Missing Discord signature headers"},
