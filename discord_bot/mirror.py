@@ -149,12 +149,6 @@ def process_report(log_id, app_id, token):
             else ""
         )
 
-        status = (
-            "Mirrored to the team channel."
-            if ok
-            else "Saved. Mirroring will be retried automatically."
-        )
-
         send_followup(
             app_id,
             token,
